@@ -6,34 +6,30 @@ import (
     "fmt"
     "log"
     "os"
-    "path/filepath"
+    "flag"
     "strings"
 )
 
-const usage = "usage: %s [option] <whole number>\n\n" +
-              "options:\n" +
-              "  -b, --bars: print bars of stars\n" +
-              "  -h, --help: display this message\n\n"
-
 func main() {
-    bars := false
-    stringOfDigits := ""
-    
-    if len(os.Args) == 1 {
-        // print usage information
-        fmt.Printf(usage, filepath.Base(os.Args[0]))
-        os.Exit(1)
-    } else {
-        if os.Args[1] == "-h" || os.Args[1] == "--help" {
-            fmt.Printf(usage, filepath.Base(os.Args[0]))
-            os.Exit(1)
-        } else if os.Args[1] == "-b" || os.Args[1] == "--bars" {            
-            bars = true
-            stringOfDigits = os.Args[2]
-        } else {
-            stringOfDigits = os.Args[1]
-        }
+    var bars bool
+    flag.BoolVar(&bars, "bars", false, "print bars of stars above and below the digits")
+    flag.BoolVar(&bars, "b", false, "")
+
+    // Overwrite the default flag.Usage function
+    flag.Usage = func() {
+        fmt.Fprintf(os.Stderr, "usage: %s [-b | --bars] <whole number>\n", os.Args[0])
+        fmt.Fprintf(os.Stderr, "    -b, --bars: %s\n", flag.Lookup("bars").Usage) 
     }
+    
+    flag.Parse()
+    
+    // Verify that an argument has been provided
+    if flag.NArg() == 0 {
+        flag.Usage()
+        os.Exit(1)
+    }
+    
+    stringOfDigits := flag.Args()[0]
 
     // Create the bar string
     bar := ""
