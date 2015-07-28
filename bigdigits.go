@@ -7,16 +7,49 @@ import (
     "log"
     "os"
     "path/filepath"
+    "strings"
 )
 
+const usage = "usage: %s [option] <whole number>\n\n" +
+              "options:\n" +
+              "  -b, --bars: print bars of stars\n" +
+              "  -h, --help: display this message\n\n"
+
 func main() {
+    bars := false
+    stringOfDigits := ""
+    
     if len(os.Args) == 1 {
         // print usage information
-        fmt.Printf("usage: %s <whole number>\n", filepath.Base(os.Args[0]))
+        fmt.Printf(usage, filepath.Base(os.Args[0]))
         os.Exit(1)
+    } else {
+        if os.Args[1] == "-h" || os.Args[1] == "--help" {
+            fmt.Printf(usage, filepath.Base(os.Args[0]))
+            os.Exit(1)
+        } else if os.Args[1] == "-b" || os.Args[1] == "--bars" {            
+            bars = true
+            stringOfDigits = os.Args[2]
+        } else {
+            stringOfDigits = os.Args[1]
+        }
     }
-    
-    stringOfDigits := os.Args[1]
+
+    // Create the bar string
+    bar := ""
+    for column := range stringOfDigits {
+        digit := stringOfDigits[column] - '0'
+        if 0 <= digit && digit <= 9 {
+            bar += strings.Repeat("*", len(bigDigits[digit][0])+1)
+        } else {
+            log.Fatal("invalid whole number")
+        }
+    }
+    bar = bar[:len(bar)-1]
+
+    if bars {
+        fmt.Println(bar)
+    }
     
     for row := range bigDigits[0] {
         line := ""
@@ -29,6 +62,10 @@ func main() {
             }
         }
         fmt.Println(line)
+    }
+    
+    if bars {
+        fmt.Println(bar)
     }
 }
 
