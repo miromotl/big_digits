@@ -8,6 +8,7 @@ import (
     "os"
     "flag"
     "strings"
+    "path/filepath"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 
     // Overwrite the default flag.Usage function
     flag.Usage = func() {
-        fmt.Fprintf(os.Stderr, "usage: %s [-b | --bars] <whole number>\n", os.Args[0])
+        fmt.Fprintf(os.Stderr, "usage: %s [-b | --bars] <whole number>\n", filepath.Base(os.Args[0]))
         fmt.Fprintf(os.Stderr, "    -b, --bars: %s\n", flag.Lookup("bars").Usage) 
     }
     
